@@ -57,6 +57,19 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        bin: {
+          wet: "hsl(var(--bin-wet))",
+          dry: "hsl(var(--bin-dry))",
+          hazard: "hsl(var(--bin-hazard))",
+          recycle: "hsl(var(--bin-recycle))",
+        },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        sparkle: "hsl(var(--sparkle))",
+        glow: "hsl(var(--glow))",
+      },
+      fontFamily: {
+        sans: ["Fredoka", "Comic Sans MS", "system-ui", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
