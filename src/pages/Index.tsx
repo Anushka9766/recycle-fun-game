@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { RecycleBin } from "@/components/game/RecycleBin";
-import { DraggableItem } from "@/components/game/DraggableItem";
+import { FallingItem } from "@/components/game/FallingItem";
+import { ItemDispenser } from "@/components/game/ItemDispenser";
 import { ScoreBoard } from "@/components/game/ScoreBoard";
 import { FunFactModal } from "@/components/game/FunFactModal";
 import { BinType, WasteItem, GameStats } from "@/types/game";
@@ -22,6 +23,8 @@ const Index = () => {
   const [showFunFact, setShowFunFact] = useState(false);
   const [currentFact, setCurrentFact] = useState("");
   const [usedItems, setUsedItems] = useState<Set<string>>(new Set());
+  const [isDispensing, setIsDispensing] = useState(false);
+  const [itemReady, setItemReady] = useState(false);
 
   const getRandomItem = () => {
     const availableItems = wasteItems.filter((item) => !usedItems.has(item.id));
@@ -33,8 +36,18 @@ const Index = () => {
   };
 
   useEffect(() => {
-    setCurrentItem(getRandomItem());
+    dispenseNewItem();
   }, []);
+
+  const dispenseNewItem = () => {
+    setIsDispensing(true);
+    setItemReady(false);
+    
+    setTimeout(() => {
+      setCurrentItem(getRandomItem());
+      setIsDispensing(false);
+    }, 500);
+  };
 
   const handleDrop = (binType: BinType) => {
     if (!currentItem) return;
@@ -77,7 +90,7 @@ const Index = () => {
       setShowFeedback(false);
       setLastResult(null);
       setUsedItems((prev) => new Set([...prev, currentItem.id]));
-      setCurrentItem(getRandomItem());
+      dispenseNewItem();
     }, 1500);
   };
 
@@ -89,7 +102,8 @@ const Index = () => {
       incorrectSorts: 0,
     });
     setUsedItems(new Set());
-    setCurrentItem(getRandomItem());
+    setItemReady(false);
+    dispenseNewItem();
     toast.success("Game reset! Let's start fresh! 🎮");
   };
 
@@ -111,10 +125,19 @@ const Index = () => {
           <ScoreBoard stats={stats} />
         </div>
 
-        {/* Current Item */}
+        {/* Item Dispenser */}
+        <div className="flex justify-center">
+          <ItemDispenser isDispensing={isDispensing} />
+        </div>
+
+        {/* Current Item - Falls from dispenser */}
         <div className="flex justify-center items-center min-h-[180px]">
           {currentItem && !showFeedback && (
-            <DraggableItem item={currentItem} onDragStart={() => {}} />
+            <FallingItem 
+              item={currentItem} 
+              onDragStart={() => {}} 
+              onAnimationComplete={() => setItemReady(true)}
+            />
           )}
           {showFeedback && (
             <div className="text-center animate-bounce-in">
